@@ -7,8 +7,9 @@
 
 import UIKit
 import CoreLocation
+import UserNotifications
 
-class ViewController: UIViewController, CLLocationManagerDelegate {
+class ViewController: UIViewController, CLLocationManagerDelegate, UNUserNotificationCenterDelegate {
     
     var locationManager:CLLocationManager!
     var beaconRegin:CLBeaconRegion!
@@ -20,7 +21,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         super.viewDidLoad()
         locationManager = CLLocationManager()
         
-        //とりあえずこのファイルでdelegateを呼び出す為に記述
+        //とりあえずdelegateを呼び出す為に記述
         locationManager.delegate = self
         //この記述は必要？
         locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
@@ -48,6 +49,18 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
             beaconRegion.notifyOnExit = true
             locationManager.startMonitoring(for: beaconRegion)
             locationManager.startRangingBeacons(satisfying: beaconRegion.beaconIdentityConstraint)
+        }
+        
+        confirmLocalNotification()
+    }
+    
+    func confirmLocalNotification() {
+        //許可をもらう通知タイプの種類を定義
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert,.sound,.badge]) { (success, error) in
+            if let error = error {
+                print("Request Authorization Failed (\(error), \(error.localizedDescription))")
+            }
+            return
         }
     }
     
