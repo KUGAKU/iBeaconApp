@@ -64,6 +64,23 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UNUserNotific
         }
     }
     
+    func scheduleNotification(
+        title: String,
+        body: String
+    ) {
+        let center = UNUserNotificationCenter.current()
+        let content = UNMutableNotificationContent()
+        content.title = title
+        content.body = body
+        content.categoryIdentifier = "alarm"
+        content.userInfo = ["customeData": "kugaku"]
+        content.sound = UNNotificationSound.default
+        
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 3, repeats: false)
+        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
+        center.add(request)
+    }
+    
     func locationManager(_ manager: CLLocationManager, didStartMonitoringFor region: CLRegion) {
         print("start monitoring for region")
         manager.requestState(for: region)
@@ -84,10 +101,18 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UNUserNotific
     
     func locationManager(_ manager: CLLocationManager, didEnterRegion region: CLRegion) {
         print("didEnterregion was fired !!!")
+        scheduleNotification(
+            title: "didEnterregion was fired !!!",
+            body: "対象のリージョンに入りました。"
+        )
     }
     
     func locationManager(_ manager: CLLocationManager, didExitRegion region: CLRegion) {
         print("didExitRegion was fired !!!")
+        scheduleNotification(
+            title: "didExitRegion was fired !!!",
+            body: "対象のリージョンから離れました。"
+        )
     }
     
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
